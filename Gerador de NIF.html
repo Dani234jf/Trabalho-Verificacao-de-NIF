@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+  
+  <style>
+
+    :root {
+  
+      --color-green-400: hsl(172, 67%, 45%);
+      --color-green-100: hsl(172, 67%, 80%);
+      --color-green-900: hsl(183, 100%, 15%);
+      --color-grey-500: hsl(186, 14%, 43%);
+      --color-grey-400: hsl(184, 14%, 56%);
+      --color-grey-300: hsl(188, 24%, 81%);
+      --color-grey-200: hsl(185, 41%, 84%);
+      --color-grey-50: hsl(189, 47%, 97%);
+      --color-white: hsl(0, 100%, 100%);
+      --color-red: hsl(0, 81%, 65%);
+  
+    }
+  
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+  
+    html {
+      background-color: var(--color-grey-200);
+      min-block-size: 100vh;
+    }
+  
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: "space mono";
+      font-weight: 700;
+      color: var(--color-grey-500);
+      block-size: 100vh;
+      padding: 1rem;
+    }
+      
+    main {
+      display: grid;
+      gap: 1.25rem;
+      background-color: var(--color-white);
+      padding: 1.5rem;
+      border-radius: 1.25rem;
+      max-inline-size: 50rem;
+      min-block-size: 25rem;
+      box-shadow: 0 1rem 1rem 0 rgba(0, 0, 0, 0.05);
+    }
+  
+    section {
+      display: grid;
+      gap: 1.5rem;
+    }
+  
+    input::-webkit-inner-spin-button,
+    input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
+  
+    button, input {
+      font-family: inherit;
+      font-weight: inherit;
+      color: var(--color-green-900);
+      font-size: inherit;
+      border: none;
+      border-radius: 0.25rem;
+      padding: 0.5rem;
+    }
+    
+    input {
+      appearance: none;
+      -moz-appearance: none;
+      outline: none;
+      text-align: end;
+      background-color: var(--color-grey-50);
+      inline-size: 100%;
+      &::placeholder {
+        color: var(--color-grey-300);
+      }
+      position: relative;
+    }
+  
+    input:focus, input:focus-visible {
+      outline: 0.1rem solid var(--color-green-400);
+    }
+  
+    button {
+      background-color: var(--color-green-900);
+      color: var(--color-grey-50);
+    }
+    
+    button[data-selected="true"] {
+      color: var(--color-green-900);
+      background-color: var(--color-green-400);
+    }
+  
+    button:hover, button:focus-visible {
+      cursor: pointer;
+      background-color: var(--color-green-100);
+      color: var(--color-green-900);
+    }
+    
+    .tip-input {
+      display: grid;
+      align-items: center;
+      align-content: center;
+    }
+  
+    .tip-output {
+      background-color: var(--color-green-900);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      align-content: space-evenly;
+      .disable {
+        color: var(--color-green-900);
+        background-color: var(--color-grey-500);
+        padding: 0.5rem;
+      }
+      button:not(:hover):not(.disable) {
+        background-color: var(--color-green-400);
+        color: var(--color-green-900);
+      }
+      & > div > :last-child {
+        color: var(--color-green-400);
+      }
+      & > div {
+        display: flex;
+        :last-child {
+          margin-left: auto;
+        }
+      }
+    }
+
+    .console {
+      background-color: var(--color-grey-300);
+    }
+  
+  </style>
+
+  <title>Gerador de NIF</title>
+
+</head>
+<body>
+  <main>
+    <section class="tip-input">
+      <h2>VERIFICADOR DE NIFS</h2>
+      <label>Número NIF</label>
+      <input type="number" name="nifNumber" id="nif-number" placeholder="123456789">
+    </section>
+    <section class="tip-output">
+      <div>
+          <p>Nif Válido:</p>
+          <p id="nif-validation">---</p>
+      </div>
+      <button id="reset-button" class="disable">RESETAR</button>
+    </section>
+  </main>
+  <section class="console">
+    <p></p>
+  </section>
+
+  <script>
+
+    const nifInput = document.querySelector("#nif-number");
+    const nifValidOutput = document.querySelector("#nif-validation");
+    const resetButton = document.querySelector("#reset-button");
+
+    const VerifyNif = (nifNumber) => {
+      let filteredNumber = "";
+
+      for (let i = 0; i < nifNumber.length ; i++) 
+      {
+        if ( !isNaN(Number(nifNumber[i])) ) { filteredNumber += nifNumber[i]; }
+      }
+
+      console.log(`[DEBUG]: filteredValue = ${filteredNumber}`);
+      
+      let FirstValue = Number(filteredNumber[0]);
+
+      console.log(`[DEBUG]: firstValue = ${FirstValue}`);
+      console.log(`[DEBUG]: numberLength = ${filteredNumber.length}`);
+
+      if (filteredNumber.length != 9 || FirstValue == 0) {
+        console.log("");
+        if (filteredNumber.length != 9) { console.log(`[CHECK]: numberLength = 9 ✘`); }
+        else if ( FirstValue == 0 ) { console.log("[CHECK]: firstValue != 0 ✘"); }
+        return false;  
+      }
+
+      console.log("");
+      console.log(`[CHECK]: numberLength = 9 ✔`);
+      console.log(`[CHECK]: firstValue != 0 ✔`);
+
+      let calculoCheckSum = 0;
+
+      for (let i = 0; i < 8; i++)
+      {
+        calculoCheckSum += (Number(filteredNumber[i]))*(9 - i);
+      }
+
+      let digitoVerificacao = 11-(calculoCheckSum % 11);
+      
+      if (digitoVerificacao > 9) { digitoVerificacao = 0; }
+
+      console.log("");
+      console.log(`[DEBUG]: digitoVerCalculado = ${digitoVerificacao}`);
+
+      
+      let digitoVerificaçãoNif = Number(filteredNumber[8]);
+
+      console.log(`[DEBUG]: digitoVerObtido = ${digitoVerificaçãoNif}`);
+      console.log("");
+
+      if ( digitoVerificacao == digitoVerificaçãoNif ) {
+        console.log(`[CHECK]: digitoVerificaçãoObtido = digitoVerificaçãoCalculado ✔ `);
+        return true;
+      }
+      else { 
+        console.log(`[CHECK]: digitoVerificaçãoObtido = digitoVerificaçãoCalculado ✘ `);
+        return false; 
+      }
+    };
+
+    const UpdateNifValidationOutput = () => {
+      if ( nifInput.value !== "" ) {
+        nifValidOutput.textContent = `${(VerifyNif(nifInput.value) ? "SIM" : "NÃO")}`;
+      }
+      else { nifValidOutput.textContent = "---"; }
+    };
+
+    nifInput.addEventListener("input", () => {
+      console.clear();
+      UpdateNifValidationOutput();
+    });
+    
+    nifInput.addEventListener("input", () => {
+      if ( nifInput.value === "" ) { resetButton.classList.add("disable"); }
+      else { resetButton.classList.remove("disable"); }
+    });
+
+    resetButton.addEventListener("click", () => {
+      nifInput.value = "";
+      resetButton.classList.add("disable");
+      UpdateNifValidationOutput();
+    });
+
+  </script>
+
+</body>
+</html>
